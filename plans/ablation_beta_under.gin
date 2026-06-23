@@ -1,0 +1,4 @@
+include 'plans/principal.gin'
+
+FederationSpec.beta = 0.5
+RunSpec.out_dir = 'runs/ablation_beta_under'

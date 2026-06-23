@@ -1,0 +1,5 @@
+include 'plans/principal.gin'
+
+DataSpec.dirichlet_alpha = 0.1
+DataSpec.num_clients = 10
+RunSpec.out_dir = 'runs/supplementary_dirichlet01'

@@ -1,0 +1,5 @@
+include 'plans/principal.gin'
+
+PrivacySpec.noise_multiplier = 0.95
+PrivacySpec.target_epsilon = 4.0
+RunSpec.out_dir = 'runs/supplementary_eps4'

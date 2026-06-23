@@ -1,0 +1,4 @@
+include 'plans/principal.gin'
+
+DataSpec.num_clients = 100
+RunSpec.out_dir = 'runs/supplementary_clients100'

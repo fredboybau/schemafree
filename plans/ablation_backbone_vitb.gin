@@ -1,0 +1,6 @@
+include 'plans/principal.gin'
+
+EncoderSpec.dim = 768
+EncoderSpec.depth = 12
+EncoderSpec.heads = 12
+RunSpec.out_dir = 'runs/ablation_backbone_vitb'

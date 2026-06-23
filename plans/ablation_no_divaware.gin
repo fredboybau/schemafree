@@ -1,0 +1,4 @@
+include 'plans/principal.gin'
+
+FederationSpec.beta = 0.0
+RunSpec.out_dir = 'runs/ablation_no_divaware'

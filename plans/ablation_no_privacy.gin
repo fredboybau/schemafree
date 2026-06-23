@@ -1,0 +1,4 @@
+include 'plans/principal.gin'
+
+PrivacySpec.enabled = False
+RunSpec.out_dir = 'runs/ablation_no_privacy'

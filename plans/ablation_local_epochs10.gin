@@ -1,0 +1,4 @@
+include 'plans/principal.gin'
+
+FederationSpec.local_epochs = 10
+RunSpec.out_dir = 'runs/ablation_local_epochs10'

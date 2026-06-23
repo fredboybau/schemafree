@@ -1,0 +1,4 @@
+include 'plans/principal.gin'
+
+EncoderSpec.projection_dim = 128
+RunSpec.out_dir = 'runs/ablation_proj128'

@@ -1,0 +1,4 @@
+include 'plans/principal.gin'
+
+DataSpec.label_fraction = 0.01
+RunSpec.out_dir = 'runs/supplementary_label1pct'

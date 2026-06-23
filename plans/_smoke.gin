@@ -1,0 +1,54 @@
+EncoderSpec.image_size = 32
+EncoderSpec.patch_size = 16
+EncoderSpec.dim = 48
+EncoderSpec.depth = 2
+EncoderSpec.heads = 3
+EncoderSpec.mlp_ratio = 2.0
+EncoderSpec.projection_dim = 64
+EncoderSpec.bottleneck_dim = 32
+EncoderSpec.hidden_dim = 96
+
+DistillSpec.student_temp = 0.1
+DistillSpec.teacher_temp = 0.1
+DistillSpec.warmup_teacher_temp = 0.1
+DistillSpec.warmup_teacher_epochs = 1
+DistillSpec.center_momentum = 0.9
+DistillSpec.global_crops = 2
+DistillSpec.local_crops = 2
+
+FederationSpec.rounds = 2
+FederationSpec.local_epochs = 1
+FederationSpec.beta = 2.0
+FederationSpec.secure_sum = False
+
+PrivacySpec.enabled = False
+PrivacySpec.clip_norm = 1.0
+PrivacySpec.delta = 1e-5
+PrivacySpec.sample_rate = 0.5
+PrivacySpec.noise_multiplier = 0.5
+PrivacySpec.target_epsilon = 8.0
+
+OptimSpec.lr = 1e-3
+OptimSpec.weight_decay = 0.0
+OptimSpec.warmup_epochs = 0
+OptimSpec.min_lr = 1e-6
+OptimSpec.clip_grad = 3.0
+
+DataSpec.cohorts = ('herlev', 'sipakmed', 'mendeley_lbc', 'cric')
+DataSpec.held_out = 'herlev'
+DataSpec.image_size = 32
+DataSpec.local_batch = 4
+DataSpec.stain_normalize = False
+DataSpec.label_fraction = 1.0
+DataSpec.dirichlet_alpha = 100.0
+DataSpec.num_clients = 4
+
+ProbeSpec.epochs = 30
+ProbeSpec.lr = 1e-2
+ProbeSpec.fine_tune = False
+
+RunSpec.seed = 7
+RunSpec.world_size = 1
+RunSpec.device = 'cpu'
+RunSpec.amp = False
+RunSpec.out_dir = 'runs/_smoke'

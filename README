@@ -1,0 +1,166 @@
+==============================================================================
+                          S C H E M A F R E E
+        a surveyor's field book for label-free cross-cohort federation
+==============================================================================
+
+  Four laboratories on three continents look at cervical cytology through
+  four incompatible grading languages. SchemaFree treats each as a survey
+  party occupying its own station: every party measures the same terrain
+  (cell morphology) with its own instrument, and the network is adjusted
+  into one consistent map (a shared encoder) WITHOUT any party handing over
+  its raw field notes (images) or agreeing on a common legend (label
+  taxonomy). Naming the cells is left to each party, afterwards, in its own
+  language, with the few labels it has.
+
+  This book records how the federation is laid out, occupied, adjusted, and
+  checked.
+
+
+STATION 0 — WHAT IS IN THE FIELD BOOK
+------------------------------------------------------------------------------
+  src/schemafree/
+    fieldwork/      occupying the stations: cohort taxonomies and the
+                    normal-versus-abnormal harmonization, stain normalization
+                    and jitter, the multi-crop channels, slide-level splits.
+    instruments/    the measuring gear: a self-distillation vision transformer
+                    (ViT-S/16), its projection head, and the per-example
+                    clip-and-noise that makes each reading differentially
+                    private.
+    triangulation/  fixing the network: the per-station drift (1 - cosine to
+                    the consensus), the divergence-aware domain-structured
+                    weights, the secure summation transport, the Renyi privacy
+                    ledger, and the round-by-round traverse.
+    adjustment/     the least-squares adjustment of the readings: the DINO
+                    self-distillation objective.
+    control/        the control marks that verify the survey: macro-F1,
+                    balanced accuracy, sensitivity, specificity, AUC, ECE and
+                    Brier, temperature rescaling, DeLong variance, bootstrap
+                    intervals, Holm-Bonferroni and Benjamini-Hochberg,
+                    Cochran's Q and I-squared, and the frozen-encoder linear
+                    probe.
+    datum/          the reference frame: seeding, atomic checkpoints, the gin
+                    binding layer, and the typed station registers.
+    sheets/         the working sheets you run: pretrain, probe, evaluate,
+                    export.
+
+  plans/            gin survey plans. principal.gin carries the reported
+                    configuration; ablation_*.gin and supplementary_*.gin
+                    redraw single dimensions; _smoke.gin is for the test bench
+                    only and must not be used for any reported reading.
+
+  control_points.txt  the verified cohort sources. Read this before laying
+                      out any data.
+
+
+STATION 1 — LAYING OUT THE INSTRUMENTS (install)
+------------------------------------------------------------------------------
+  The toolchain is pinned hard, because a survey adjusted under one set of
+  numerics must be reproducible under exactly the same ones. Expect a CUDA
+  12.1 / PyTorch 2.1 / Python 3.9 environment and nothing more recent.
+
+  pip:
+      python3.9 -m venv .venv
+      . .venv/bin/activate
+      pip install -r requirements.txt
+      pip install -e .
+
+  conda:
+      conda env create -f environment.yml
+      conda activate schemafree
+
+  docker:
+      docker build -t schemafree .
+      docker run --gpus all schemafree plans/principal.gin
+
+
+STATION 2 — OCCUPYING THE STATIONS (data)
+------------------------------------------------------------------------------
+  control_points.txt holds the verified sources. Four cohorts are clients
+  (each carries a few labels in its own taxonomy); two larger collections
+  enter the unlabeled pretraining pool only.
+
+    herlev         Denmark   conventional smear   7-class dysplasia
+    sipakmed       Greece    conventional smear   5-class morphological
+    mendeley_lbc   India     liquid-based         4-class Bethesda   CC BY 4.0
+    cric           Brazil    conventional smear   6-class Bethesda
+
+  The Brazilian station did not answer when this book was written and the
+  identifier in circulation pointed elsewhere; cric stays the fourth client
+  in the configuration but you must occupy its station from the maintained
+  CRIC platform before its loader will read anything.
+
+  Lay one image folder per cohort under a data root, then check the marks:
+
+      scripts/fetch_marks.sh data
+
+  With no data root present every sheet falls back to a planted-signal
+  synthetic field, which is what the test bench and a dry run use.
+
+
+STATION 3 — THE TRAVERSE (federated pretraining)
+------------------------------------------------------------------------------
+  Each round, every party runs three local epochs of self-distillation under
+  per-example clipping and Gaussian noise, reports an encoder update, and the
+  server adjusts the network with the divergence-aware weights. Stain and
+  scanner structure in the disagreement is damped; each party's normalization
+  is kept local. No image and no label crosses a station boundary.
+
+      python -m schemafree.sheets.pretrain plans/principal.gin --data-root data
+
+  Multi-GPU, four ways:
+
+      scripts/lay_baseline.sh plans/principal.gin data
+
+  The principal plan fixes: ViT-S/16, 100 rounds, 3 local epochs, aggregation
+  sharpness beta=2.0, projection dimension 512, student temperature 0.04,
+  AdamW at 1e-3 on a cosine schedule, DP clip 1.0 with delta 1e-5 and Poisson
+  rate 0.01, noise multiplier 0.62 at the epsilon=8 operating point.
+
+
+STATION 4 — NAMING AND CHECKING (probe and evaluation)
+------------------------------------------------------------------------------
+  Freeze the encoder, fit a linear head on a held-out cohort's few labels in
+  its own taxonomy, then read the cross-cohort marks on the binary
+  normal-versus-abnormal axis:
+
+      scripts/adjust_network.sh plans/principal.gin runs/principal/encoder.ckpt
+
+  Expected control marks on the leave-one-cohort-out axis, mean over 20 seeds:
+
+      cross-cohort macro-F1   0.691 +/- 0.044
+        herlev                0.625
+        sipakmed              0.748
+        mendeley_lbc          0.689
+        cric                  0.701
+
+  Sensitivity holds between 0.70 and 0.81 per cohort; AUC between 0.81 and
+  0.87; expected calibration error 0.058 to 0.094 before a single temperature
+  rescaling and roughly half that after. The centralized pooled bound sits
+  above every federated entry, as it must; SchemaFree leads the deployable
+  field on every cohort and sits below that bound.
+
+
+STATION 5 — THE LEDGER (compute budget, stated plainly)
+------------------------------------------------------------------------------
+  4x NVIDIA A100 40GB, CUDA 12.1, PyTorch 2.1.
+  Pretraining ~46.8 GPU-hours; downstream adaptation ~1.5 GPU-hours.
+  Communication ~104 MB per round, about 18% above plain aggregation owing to
+  secure summation. Total across every reported reading ~3,900 GPU-hours.
+  These numbers are not negotiable down; budget for them before you start.
+
+
+STATION 6 — EXPORT
+------------------------------------------------------------------------------
+      python -m schemafree.sheets.export plans/principal.gin \
+          --checkpoint runs/principal/encoder.ckpt --out runs/encoder.onnx
+
+
+THE TEST BENCH
+------------------------------------------------------------------------------
+      pytest -q
+      ruff check . && black --check . && isort --check . && mypy src/schemafree
+
+  The bench mixes property, regression, numerical, shape, overfit, and
+  integration checks; the closed-form aggregation optimum, the privacy ledger,
+  and the metric library are each pinned to an independent reference.
+==============================================================================

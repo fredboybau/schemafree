@@ -1,0 +1,66 @@
+==============================================================================
+ CONTROL POINTS  —  cohort sources for the SchemaFree federation
+==============================================================================
+ A control point is a fixed, externally verified reference mark. Each line
+ below was resolved live before being entered into the register. Marks that
+ could not be occupied (no reachable station) are recorded at the bottom and
+ are NOT used by the loaders.
+
+ Four cohorts are treated as clients (each carries a few labels in its own
+ native taxonomy). Two larger collections enter the unlabeled pretraining
+ pool only and never carry labels.
+------------------------------------------------------------------------------
+
+[CLIENT]  Herlev Pap-smear database
+  country   Denmark
+  cells     917
+  taxonomy  7-class dysplasia (three-normal / four-abnormal)
+  role      federated client + native-taxonomy head
+  station   https://mde-lab.aegean.gr/index.php/downloads/
+  terms     free for research use, attribution requested
+
+[CLIENT]  SIPaKMeD
+  country   Greece
+  cells     4049
+  taxonomy  5-class morphological
+  role      federated client + native-taxonomy head
+  station   https://www.cs.uoi.gr/~marina/sipakmed.html
+  terms     research use, cite the 2018 ICIP source paper
+
+[CLIENT]  Mendeley liquid-based cytology (LBC)
+  country   India
+  images    963
+  taxonomy  4-class Bethesda (64% NILM)
+  role      federated client + native-taxonomy head
+  station   https://data.mendeley.com/datasets/zddtpgzv63/4
+  doi       10.17632/zddtpgzv63.4
+  terms     CC BY 4.0
+
+[POOL]    APACC
+  country   Hungary
+  cells     ~103000
+  taxonomy  unlabeled (pretraining pool only)
+  role      unlabeled pretraining pool
+  station   https://osf.io/fp2xe/
+
+[POOL]    HiCervix
+  country   China
+  cells     ~40000
+  taxonomy  hierarchical, used unlabeled
+  role      unlabeled pretraining pool
+  station   https://doi.org/10.5281/zenodo.11081816
+
+------------------------------------------------------------------------------
+ UNOCCUPIED STATIONS (recorded, not used)
+------------------------------------------------------------------------------
+[CLIENT]  CRIC Cervix
+  country   Brazil
+  cells     11534
+  taxonomy  6-class Bethesda
+  note      the CRIC platform station did not answer at build time and the
+            figshare identifier in circulation resolves to an unrelated
+            record; no reachable mark, so no source line is registered. The
+            cohort itself remains the fourth client in the federation config;
+            occupy this station from the maintained CRIC platform when it is
+            reachable before running the loaders.
+==============================================================================
